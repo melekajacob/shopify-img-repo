@@ -53,6 +53,8 @@ export default function QuestionsList() {
               <QuestionCard
                 questionThumbnailUrl={item.questionThumbnailUrl}
                 questionName={item.questionName}
+                questionUrl={item.questionUrl}
+                solutionUrl={item.solutionUrl}
               />
             </div>
           );
