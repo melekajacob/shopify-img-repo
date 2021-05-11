@@ -49,7 +49,7 @@ export default function QuestionsList() {
       <div className="row">
         {DATA.map((item) => {
           return (
-            <div className="col-md-4">
+            <div className="col-md-3">
               <QuestionCard
                 questionThumbnailUrl={item.questionThumbnailUrl}
                 questionName={item.questionName}

@@ -1,9 +1,11 @@
 import { FaEye, FaTrashAlt } from "react-icons/fa";
-
-import { useState, useCallback } from "react";
+import cx from "classnames";
+import { useState } from "react";
 
 import ImageViewer from "react-simple-image-viewer";
-export default function QuestionCard(props) {
+import styles from "./QuestionCard.module.css";
+
+function QuestionCard(props) {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   const openImageViewer = () => {
@@ -15,7 +17,7 @@ export default function QuestionCard(props) {
   };
 
   return (
-    <div className="card text-center">
+    <div className={styles.card + " card shadow-sm text-center mb-3"}>
       <div className="overflow">
         <img className="card-img-top" src={props.questionThumbnailUrl}></img>
       </div>
@@ -48,3 +50,5 @@ export default function QuestionCard(props) {
     </div>
   );
 }
+
+export default QuestionCard;
