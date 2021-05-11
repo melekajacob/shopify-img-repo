@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import AddQuestionModal from "./AddQuestionModal";
+import AddQuestionModal from "./AddQuestionModal/AddQuestionModal";
 
 export default function AddQuestionButton() {
   const [show, setShow] = useState(false);
@@ -20,9 +20,7 @@ export default function AddQuestionButton() {
         size="lg"
         block
       >
-        <span>
-          <FaPlusCircle /> Add Question
-        </span>
+        <FaPlusCircle /> Add Question
       </Button>
 
       <AddQuestionModal show={show} handleClose={handleClose} />
