@@ -1,8 +1,6 @@
 import ClosableModal from "../../ClosableModal";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import styles from "./QuestionMetadataForm.module.css";
-
 export default function QuestionMetadataForm(props) {
   return (
     <ClosableModal
@@ -26,25 +24,25 @@ export default function QuestionMetadataForm(props) {
             <Form.Control
               onChange={props.inputChange("name")}
               placeholder="Name"
-              className={styles.roundedInput}
+              className="roundedInput"
             />
 
             <Form.Control
               onChange={props.inputChange("class")}
               placeholder="Class"
-              className={styles.roundedInput}
+              className="roundedInput"
             />
 
             <Form.Control
               onChange={props.inputChange("instructor")}
               placeholder="Instructor"
-              className={styles.roundedInput}
+              className="roundedInput"
             />
 
             <Form.Control
               onChange={props.inputChange("unit")}
               placeholder="Unit"
-              className={styles.roundedInput}
+              className="roundedInput"
             />
           </div>
         </Modal.Body>

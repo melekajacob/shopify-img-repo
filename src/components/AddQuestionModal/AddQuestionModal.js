@@ -73,5 +73,7 @@ export default function AddQuestionModal(props) {
           handleAddQuestion={handleAddQuestion}
         />
       );
+    default:
+      return <div>Error occurred</div>;
   }
 }
