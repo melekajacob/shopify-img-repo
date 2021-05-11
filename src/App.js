@@ -4,6 +4,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import AddQuestionButton from "./components/AddQuestionButton";
+import QuestionsList from "./components/QuestionsList";
 
 function App() {
   return (
@@ -15,7 +16,10 @@ function App() {
           </Col>
         </Row>
       </Container>
+
       <hr></hr>
+
+      <QuestionsList />
     </Container>
   );
 }
