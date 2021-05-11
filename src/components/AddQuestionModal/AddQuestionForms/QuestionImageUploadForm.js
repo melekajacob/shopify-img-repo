@@ -6,9 +6,9 @@ import { useState, useRef, useEffect } from "react";
 
 // TODO: Figure out animation
 export default function QuestionImageUploadForm(props) {
-  const [questionImage, setQuestionImage] = useState(null);
+  const [questionImage, setQuestionImage] = useState(props.questionImage);
   const [questionPreview, setQuestionPreview] = useState(null);
-  const [solutionImage, setSolutionImage] = useState(null);
+  const [solutionImage, setSolutionImage] = useState(props.solutionImage);
   const [solutionPreview, setSolutionPreview] = useState(null);
 
   const questionInputRef = useRef();
@@ -21,9 +21,9 @@ export default function QuestionImageUploadForm(props) {
     if (file) {
       props.addImageData(type, file);
 
-      if (type == "question") {
+      if (type === "question") {
         setQuestionImage(file);
-      } else if (type == "solution") {
+      } else if (type === "solution") {
         setSolutionImage(file);
       }
     }
@@ -34,11 +34,6 @@ export default function QuestionImageUploadForm(props) {
     setSolutionPreview(null);
     props.discardData(e);
   };
-
-  useEffect(() => {
-    setQuestionImage(props.questionImage);
-    setSolutionImage(props.solutionImage);
-  }, []);
 
   useEffect(() => {
     if (questionImage) {
@@ -66,9 +61,9 @@ export default function QuestionImageUploadForm(props) {
 
   const handleImageClick = (type) => (e) => {
     e.preventDefault();
-    if (type == "question") {
+    if (type === "question") {
       questionInputRef.current.click();
-    } else if (type == "solution") {
+    } else if (type === "solution") {
       solutionInputRef.current.click();
     }
   };
@@ -99,6 +94,7 @@ export default function QuestionImageUploadForm(props) {
                   src={questionPreview}
                   onClick={handleImageClick("question")}
                   className={styles.preview}
+                  alt="Uploaded Question"
                 ></img>
               ) : (
                 <button
@@ -110,7 +106,7 @@ export default function QuestionImageUploadForm(props) {
               )}
 
               <input
-                accept="image/*"
+                accept="image/png,image/jpeg"
                 type="file"
                 style={{ display: "none" }}
                 ref={questionInputRef}
@@ -125,6 +121,7 @@ export default function QuestionImageUploadForm(props) {
                   src={solutionPreview}
                   onClick={handleImageClick("solution")}
                   className={styles.preview}
+                  alt="Uploaded Solution"
                 ></img>
               ) : (
                 <button
@@ -136,7 +133,7 @@ export default function QuestionImageUploadForm(props) {
               )}
 
               <input
-                accept="image/*"
+                accept="image/png,image/jpeg"
                 type="file"
                 style={{ display: "none" }}
                 ref={solutionInputRef}
