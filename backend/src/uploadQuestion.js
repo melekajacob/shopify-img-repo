@@ -1,5 +1,4 @@
 import * as AWS from "aws-sdk";
-import { DataExchange } from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 
 AWS.config.update({ region: "us-east-2" });
