@@ -18,7 +18,8 @@
   "homepage": "https://github.com/melekajacob/s3-file-upload-api#readme",
   "dependencies": {
     "aws-sdk": "^2.903.0",
-    "serverless-iam-roles-per-function": "^3.1.0"
+    "serverless-iam-roles-per-function": "^3.1.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "serverless-offline": "^7.0.0"

@@ -29,13 +29,17 @@ resources:
     QuestionsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: QuestionsTable
+        TableName: ${self:custom.questionsTableName}
         AttributeDefinitions:
           - AttributeName: user_id
+            AttributeType: S
+          - AttributeName: question_id
             AttributeType: S
         KeySchema:
           - AttributeName: user_id
             KeyType: HASH
+          - AttributeName: question_id
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -50,11 +54,19 @@ functions:
       - http:
           path: /users/{user_id}/questions
           method: POST
+          authorizer: aws_iam
+          cors:
+            origin: "*"
+
     iamRoleStatements:
       - Effect: Allow
         Action:
           - "s3:Put*"
         Resource: arn:aws:s3:::${self:custom.questionsBucketName}/*
+      - Effect: Allow
+        Action:
+          - "dynamodb:PutItem"
+        Resource: arn:aws:dynamodb:*:*:table/${self:custom.questionsTableName}
 
   deleteQuestion:
     handler: src/deleteQuestion.handler # this is how you look in specific folder for function
@@ -65,14 +77,20 @@ functions:
       - http:
           path: /users/{user_id}/questions/{question_id}
           method: DELETE
+          authorizer: aws_iam
+
     iamRoleStatements:
       - Effect: Allow
         Action:
           - "s3:Delete*"
         Resource: arn:aws:s3:::${self:custom.questionsBucketName}/*
+      - Effect: Allow
+        Action:
+          - "dynamodb:Delete*"
+        Resource: arn:aws:dynamodb:*:*:table/${self:custom.questionsTableName}
 
   getQuestions:
-    handler: src/deleteQuestion.handler # this is how you look in specific folder for function
+    handler: src/getQuestions.handler # this is how you look in specific folder for function
     name: get-questions
     timeout: 60
     memorySize: 128
@@ -80,8 +98,14 @@ functions:
       - http:
           path: /users/{user_id}/questions
           method: GET
+          authorizer: aws_iam
+
     iamRoleStatements:
       - Effect: Allow
         Action:
           - "s3:Get*"
         Resource: arn:aws:s3:::${self:custom.questionsBucketName}/*
+      - Effect: Allow
+        Action:
+          - "dynamodb:Get*"
+        Resource: arn:aws:dynamodb:*:*:table/${self:custom.questionsTableName}

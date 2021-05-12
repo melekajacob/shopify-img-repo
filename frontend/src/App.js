@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { COGNITO } from "./configs/aws";
 import Home from "./components/Home";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/Authorization/ProtectedRoute";
 import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
 import ReactNotification from "react-notifications-component";

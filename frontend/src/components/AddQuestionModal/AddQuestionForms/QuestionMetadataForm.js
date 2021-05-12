@@ -1,4 +1,4 @@
-import ClosableModal from "../../ClosableModal";
+import ClosableModal from "../../utils/ClosableModal";
 import { Button, Modal, Form } from "react-bootstrap";
 
 export default function QuestionMetadataForm(props) {
@@ -28,8 +28,8 @@ export default function QuestionMetadataForm(props) {
             />
 
             <Form.Control
-              onChange={props.inputChange("class")}
-              placeholder="Class"
+              onChange={props.inputChange("course")}
+              placeholder="Course"
               className="roundedInput"
             />
 

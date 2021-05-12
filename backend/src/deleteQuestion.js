@@ -4,13 +4,18 @@ const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.QUESTIONS_BUCKET_NAME;
 const TABLE_NAME = process.env.QUESTIONS_TABLE_NAME;
 
+const uploadImageToS3 = { file, fileType };
+
 module.exports.handler = async (event) => {
   console.log(event);
 
   let response;
   try {
     const parsedBody = JSON.parse(event.body);
-    const base64File = parsedBody.file;
+
+    const questionUrl = uploadImageToS3(parsedBody.question);
+    const solutionUrl = uploadImageToS3(parsedBody.solution);
+
     const decodedFile = Buffer.from(
       base64File.replace(/^data:image\/\w+;base64,/, ""),
       "base64"

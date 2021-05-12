@@ -1,4 +1,4 @@
-import ClosableModal from "../../ClosableModal";
+import ClosableModal from "../../utils/ClosableModal";
 import { FaPlusCircle } from "react-icons/fa";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
 import styles from "./QuestionImageUploadForm.module.css";

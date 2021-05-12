@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { API_HOST, API_URL, ROUTES } from "../../configs/aws";
+import { fileToBase64, replacePathParams } from "../../utils";
+import * as aws4 from "aws4";
+import * as axios from "axios";
+import { Auth } from "aws-amplify";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import QuestionMetadataForm from "./AddQuestionForms/QuestionMetadataForm";
@@ -11,7 +16,7 @@ export default function AddQuestionModal(props) {
     question: null,
     solution: null,
     name: null,
-    class: null,
+    course: null,
     instructor: null,
     unit: null,
   };
@@ -34,11 +39,40 @@ export default function AddQuestionModal(props) {
     props.handleClose();
   };
 
-  const handleAddQuestion = (event) => {
+  const handleAddQuestion = async (event) => {
     event.preventDefault();
 
-    // Send form data to server, just log for now
     console.log(formData);
+    const user = await Auth.currentAuthenticatedUser();
+    const path = replacePathParams(ROUTES.ADD_QUESTION, {
+      user_id: user.username,
+    });
+
+    console.log(JSON.stringify(user, null, 2));
+
+    let payload = {
+      question: {
+        file: await fileToBase64(formData.question),
+        fileType: formData.question?.type ?? null,
+      },
+      solution: {
+        file: await fileToBase64(formData.solution),
+        fileType: formData.solution?.type ?? null,
+      },
+      name: formData.name,
+      course: formData.course,
+      instrutctor: formData.instructor,
+      unit: formData.unit,
+    };
+
+    let config = {
+      headers: {
+        Authorization: user.signInUserSession.idToken.jwtToken,
+        "content-type": "application/json",
+      },
+    };
+
+    await axios.post(API_URL + path, payload, config);
   };
 
   const nextStep = () => {

@@ -4,7 +4,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import { useEffect } from "react";
 import { Toast } from "./utils/notifications";
-import DarkNavbar from "./DarkNavbar";
+import DarkNavbar from "./utils/DarkNavbar";
 
 const Home = () => {
   useEffect(() => {

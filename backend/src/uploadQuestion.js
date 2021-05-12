@@ -1,5 +1,5 @@
-import * as AWS from "aws-sdk";
-import { v4 as uuidv4 } from "uuid";
+const AWS = require("aws-sdk");
+const { v4: uuidv4 } = require("uuid");
 
 AWS.config.update({ region: "us-east-2" });
 
@@ -31,13 +31,14 @@ const uploadImageToS3 = async ({ file, fileType }) => {
 
 module.exports.handler = async (event) => {
   console.log(event);
-
+  console.log(BUCKET_NAME);
+  console.log(TABLE_NAME);
   let response;
   try {
     const parsedBody = JSON.parse(event.body);
 
     // Concurrently uploading images to s3
-    const [questionUploadResult, solutionUploadResult] = Promise.all([
+    const [questionUploadResult, solutionUploadResult] = await Promise.all([
       uploadImageToS3(parsedBody.question),
       uploadImageToS3(parsedBody.solution),
     ]);
@@ -48,8 +49,8 @@ module.exports.handler = async (event) => {
         Item: {
           user_id: event.pathParameters.user_id,
           question_id: uuidv4(),
-          questionUrl: questionUploadResult.Location,
-          solutionUrl: solutionUploadResult.Location,
+          questionUrl: questionUploadResult?.Location ?? null,
+          solutionUrl: solutionUploadResult?.Location ?? null,
           name: parsedBody.name,
           course: parsedBody.course,
           instructor: parsedBody.instructor,
@@ -62,6 +63,10 @@ module.exports.handler = async (event) => {
 
     response = {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Credentials": true,
+      },
       body: JSON.stringify({
         message: "Successful upload",
       }),
@@ -69,6 +74,10 @@ module.exports.handler = async (event) => {
   } catch (e) {
     response = {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "'*'",
+        "Access-Control-Allow-Credentials": true,
+      },
       body: JSON.stringify({
         message: "Question/Solution failed to upload",
         error: e,
