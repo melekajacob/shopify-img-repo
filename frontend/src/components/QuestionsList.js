@@ -22,7 +22,7 @@ export default function QuestionsList() {
       },
     };
 
-    let response;
+    let response = [];
     console.log(path);
     try {
       response = await (await axios.get(path, config)).data.Items;

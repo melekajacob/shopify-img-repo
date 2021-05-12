@@ -7,6 +7,7 @@ Submission for Shopify 2021 Intern challenge
 ```
 git clone https://github.com/melekajacob/shopify-img-repo.git
 cd shopify-img-repo/frontend
+npm install
 npm start
 ```
 
