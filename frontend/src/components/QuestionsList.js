@@ -44,7 +44,6 @@ export default function QuestionsList() {
     <div className="container-fluid d-flex justify-content-center">
       <div className="row w-100">
         {questionData.map((item) => {
-          console.log(item);
           return (
             <div className="col-md-3">
               <QuestionCard
