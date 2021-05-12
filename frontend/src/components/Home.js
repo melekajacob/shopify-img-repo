@@ -7,15 +7,6 @@ import { Toast } from "./utils/notifications";
 import DarkNavbar from "./utils/DarkNavbar";
 
 const Home = () => {
-  useEffect(() => {
-    (async () => {
-      let user = null;
-
-      user = await Auth.currentAuthenticatedUser();
-      Toast("Test", JSON.stringify(user), "danger");
-    })();
-  }, []);
-
   return (
     <>
       <DarkNavbar />

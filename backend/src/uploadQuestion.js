@@ -24,6 +24,7 @@ const uploadImageToS3 = async ({ file, fileType }) => {
     Key: `images/${new Date().toISOString()}.${fileType.split("/")[1]}`, // Putting date in object name is a good idea
     Body: decodedFile,
     ContentType: fileType,
+    ACL: "public-read",
   };
 
   return s3.upload(params).promise();
@@ -51,6 +52,8 @@ module.exports.handler = async (event) => {
           question_id: uuidv4(),
           questionUrl: questionUploadResult?.Location ?? null,
           solutionUrl: solutionUploadResult?.Location ?? null,
+          s3QuestionKey: questionUploadResult?.Key ?? null,
+          s3SolutionKey: solutionUploadResult?.Key ?? null,
           name: parsedBody.name,
           course: parsedBody.course,
           instructor: parsedBody.instructor,
@@ -63,21 +66,14 @@ module.exports.handler = async (event) => {
 
     response = {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "'*'",
-        "Access-Control-Allow-Credentials": true,
-      },
       body: JSON.stringify({
         message: "Successful upload",
       }),
     };
   } catch (e) {
+    console.log(e);
     response = {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "'*'",
-        "Access-Control-Allow-Credentials": true,
-      },
       body: JSON.stringify({
         message: "Question/Solution failed to upload",
         error: e,

@@ -1,60 +1,60 @@
+import axios from "axios";
 import QuestionCard from "./QuestionCard";
-
-const DATA = [
-  {
-    questionName: "Q1 H1",
-    course: "Math 239",
-    Unit: "1",
-    instructor: "Saknini",
-    questionUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    questionThumbnailUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    solutionUrl:
-      "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-  },
-  {
-    questionName: "Q1 H1",
-    course: "Math 239",
-    Unit: "1",
-    instructor: "Saknini",
-    questionUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    questionThumbnailUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    solutionUrl:
-      "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-  },
-  {
-    questionName: "Q1 H1",
-    course: "Math 239",
-    Unit: "1",
-    instructor: "Saknini",
-    questionUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    questionThumbnailUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    solutionUrl:
-      "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-  },
-  {
-    questionName: "Q1 H1",
-    course: "Math 239",
-    Unit: "1",
-    instructor: "Saknini",
-    questionUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    questionThumbnailUrl: "https://wallpaperaccess.com/full/271965.jpg",
-    solutionUrl:
-      "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-  },
-];
+import { useState, useEffect } from "react";
+import { Auth } from "aws-amplify";
+import { replacePathParams } from "../utils";
+import { Toast } from "./utils/notifications";
+import { ROUTES } from "../configs/aws";
 
 export default function QuestionsList() {
+  const [questionData, setQuestionData] = useState([]);
+
+  const getQuestionData = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    const path = replacePathParams(ROUTES.GET_QUESTIONS, {
+      user_id: user.username,
+    });
+
+    const config = {
+      headers: {
+        Authorization: user.signInUserSession.idToken.jwtToken,
+        "content-type": "application/json",
+      },
+    };
+
+    let response;
+    console.log(path);
+    try {
+      response = await (await axios.get(path, config)).data.Items;
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+      Toast("Error!", "Could not get your images", "danger");
+      response = [];
+    }
+
+    setQuestionData(response);
+  };
+
+  useEffect(() => {
+    getQuestionData();
+  }, []);
+
   return (
     <div className="container-fluid d-flex justify-content-center">
-      <div className="row">
-        {DATA.map((item) => {
+      <div className="row w-100">
+        {questionData.map((item) => {
+          console.log(item);
           return (
             <div className="col-md-3">
               <QuestionCard
-                questionThumbnailUrl={item.questionThumbnailUrl}
+                key={item.question_id}
+                questionId={item.question_id}
+                questionThumbnailUrl={item.questionUrl}
                 questionName={item.questionName}
                 questionUrl={item.questionUrl}
                 solutionUrl={item.solutionUrl}
+                getQuestionData={getQuestionData}
               />
             </div>
           );

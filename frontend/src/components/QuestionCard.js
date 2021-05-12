@@ -1,8 +1,11 @@
 import { FaEye, FaTrashAlt } from "react-icons/fa";
-import cx from "classnames";
+import axios from "axios";
 import { useState } from "react";
-
+import { Auth } from "aws-amplify";
+import { replacePathParams } from "../utils";
 import ImageViewer from "react-simple-image-viewer";
+import { Toast } from "./utils/notifications";
+import { ROUTES } from "../configs/aws";
 import styles from "./QuestionCard.module.css";
 
 function QuestionCard(props) {
@@ -16,8 +19,32 @@ function QuestionCard(props) {
     setIsViewerOpen(false);
   };
 
+  const handleDelete = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    const path = replacePathParams(ROUTES.DELETE_QUESTION, {
+      user_id: user.username,
+      question_id: props.questionId,
+    });
+
+    const config = {
+      headers: {
+        Authorization: user.signInUserSession.idToken.jwtToken,
+        "content-type": "application/json",
+      },
+    };
+
+    console.log(path);
+    try {
+      await axios.delete(path, config);
+    } catch (e) {
+      Toast("Error!", "Failed to Delete Question/Solution", "danger");
+    }
+
+    props.getQuestionData();
+  };
+
   return (
-    <div className={styles.card + " card shadow-sm text-center mb-3"}>
+    <div className={styles.card + " w-100 card shadow-sm text-center mb-3"}>
       <div className="overflow">
         <img className="card-img-top" src={props.questionThumbnailUrl}></img>
       </div>
@@ -34,7 +61,11 @@ function QuestionCard(props) {
           &nbsp;View Question
         </a>
 
-        <a href="#" className="btn btn-outline-danger m-1">
+        <a
+          href="#"
+          className="btn btn-outline-danger m-1"
+          onClick={handleDelete}
+        >
           <FaTrashAlt />
           &nbsp;Delete Question
         </a>

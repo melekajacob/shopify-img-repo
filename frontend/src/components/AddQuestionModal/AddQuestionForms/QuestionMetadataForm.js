@@ -1,5 +1,10 @@
 import ClosableModal from "../../utils/ClosableModal";
 import { Button, Modal, Form } from "react-bootstrap";
+import {
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaDownload,
+} from "react-icons/fa";
 
 export default function QuestionMetadataForm(props) {
   return (
@@ -47,11 +52,16 @@ export default function QuestionMetadataForm(props) {
           </div>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button variant="warning" onClick={props.prevStep}>
-            Back
+          <Button variant="outline-dark" size="lg" onClick={props.prevStep}>
+            <FaArrowAltCircleLeft className="mb-1" /> &nbsp;Back
           </Button>
-          <Button variant="success" onClick={props.handleAddQuestion}>
-            Add Question
+          <Button
+            variant="outline-success"
+            size="lg"
+            onClick={props.handleAddQuestion}
+          >
+            <FaDownload className="mb-1" />
+            &nbsp;Add Question
           </Button>
         </Modal.Footer>
       </Form>

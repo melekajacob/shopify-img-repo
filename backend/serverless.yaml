@@ -87,6 +87,8 @@ functions:
       - Effect: Allow
         Action:
           - "dynamodb:Delete*"
+          - "dynamodb:Get*"
+          - "dynamodb:Query"
         Resource: arn:aws:dynamodb:*:*:table/${self:custom.questionsTableName}
 
   getQuestions:
@@ -108,4 +110,5 @@ functions:
       - Effect: Allow
         Action:
           - "dynamodb:Get*"
+          - "dynamodb:Query"
         Resource: arn:aws:dynamodb:*:*:table/${self:custom.questionsTableName}

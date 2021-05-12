@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { API_HOST, API_URL, ROUTES } from "../../configs/aws";
+import { ROUTES } from "../../configs/aws";
 import { fileToBase64, replacePathParams } from "../../utils";
-import * as aws4 from "aws4";
+
 import * as axios from "axios";
 import { Auth } from "aws-amplify";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import QuestionMetadataForm from "./AddQuestionForms/QuestionMetadataForm";
 import QuestionImageUploadForm from "./AddQuestionForms/QuestionImageUploadForm";
+import { Toast } from "../utils/notifications";
 
 // TODO: Improve the setting of question and solution images (really inefficient rn)
 export default function AddQuestionModal(props) {
@@ -42,7 +43,6 @@ export default function AddQuestionModal(props) {
   const handleAddQuestion = async (event) => {
     event.preventDefault();
 
-    console.log(formData);
     const user = await Auth.currentAuthenticatedUser();
     const path = replacePathParams(ROUTES.ADD_QUESTION, {
       user_id: user.username,
@@ -72,7 +72,20 @@ export default function AddQuestionModal(props) {
       },
     };
 
-    await axios.post(API_URL + path, payload, config);
+    console.log(payload);
+    console.log(path);
+    try {
+      await axios.post(path, payload, config);
+      discardData(event);
+      Toast(
+        "Success!",
+        "Your Question/Solution were uploaded successfully",
+        "success"
+      );
+    } catch (e) {
+      console.log(e);
+      Toast("Error!", "Failed to upload question/solution pair", "danger");
+    }
   };
 
   const nextStep = () => {

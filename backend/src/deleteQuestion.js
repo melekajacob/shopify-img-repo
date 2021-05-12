@@ -1,44 +1,62 @@
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
-
+const docClient = new AWS.DynamoDB.DocumentClient();
 const BUCKET_NAME = process.env.QUESTIONS_BUCKET_NAME;
 const TABLE_NAME = process.env.QUESTIONS_TABLE_NAME;
-
-const uploadImageToS3 = { file, fileType };
 
 module.exports.handler = async (event) => {
   console.log(event);
 
   let response;
   try {
-    const parsedBody = JSON.parse(event.body);
+    const user_id = event.pathParameters.user_id;
+    const question_id = event.pathParameters.question_id;
 
-    const questionUrl = uploadImageToS3(parsedBody.question);
-    const solutionUrl = uploadImageToS3(parsedBody.solution);
+    const { s3QuestionKey = null, s3SolutionKey = null } = await docClient
+      .get({
+        TableName: TABLE_NAME,
+        Key: {
+          user_id,
+          question_id,
+        },
+      })
+      .promise();
 
-    const decodedFile = Buffer.from(
-      base64File.replace(/^data:image\/\w+;base64,/, ""),
-      "base64"
-    );
-    const params = {
-      Bucket: BUCKET_NAME,
-      Key: `images/${new Date().toISOString()}.jpeg`, // Putting date in object name is a good idea
-      Body: decodedFile,
-      ContentType: "image/jpeg",
-    };
+    // If s3 delete fails, not so big of a deal
+    try {
+      const promises = [s3QuestionKey, s3SolutionKey]
+        .filter((key) => key)
+        .map((key) => {
+          return s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+        });
 
-    const uploadResult = await s3.upload(params).promise();
+      await Promise.all(promises);
+    } catch (e) {
+      console.log("Failed to delete, we will keep going though", e);
+    }
+
+    // If this fails, its a big deal
+    await docClient
+      .delete({
+        TableName: TABLE_NAME,
+        Key: {
+          user_id,
+          question_id,
+        },
+      })
+      .promise();
+
     response = {
       statusCode: 200,
       body: JSON.stringify({
-        message: "Successful upload",
-        metadata: uploadResult,
+        message: "Successful delete",
       }),
     };
   } catch (e) {
+    console.log(e);
     response = {
       statusCode: 500,
-      body: JSON.stringify({ message: "File failed to upload", error: e }),
+      body: JSON.stringify({ message: "Question failed to delete", error: e }),
     };
   }
 

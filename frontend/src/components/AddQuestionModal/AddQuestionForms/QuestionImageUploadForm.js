@@ -3,6 +3,8 @@ import { FaPlusCircle } from "react-icons/fa";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
 import styles from "./QuestionImageUploadForm.module.css";
 import { useState, useRef, useEffect } from "react";
+import { Toast } from "../../utils/notifications";
+import { FaArrowAltCircleRight, FaTrashAlt } from "react-icons/fa";
 
 // TODO: Figure out animation
 export default function QuestionImageUploadForm(props) {
@@ -13,6 +15,20 @@ export default function QuestionImageUploadForm(props) {
 
   const questionInputRef = useRef();
   const solutionInputRef = useRef();
+
+  const handleNext = (e) => {
+    e.preventDefault();
+
+    if (questionImage != null) {
+      props.nextStep();
+    } else {
+      Toast(
+        "Error!",
+        "Need to include atleast an image of a question",
+        "danger"
+      );
+    }
+  };
 
   // TODO: Add better error checking
   const addImage = (type) => (e) => {
@@ -143,11 +159,13 @@ export default function QuestionImageUploadForm(props) {
           </Row>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
-          <Button variant="danger" onClick={discard}>
-            Discard
+          <Button variant="outline-danger" size="lg" onClick={discard}>
+            <FaTrashAlt />
+            &nbsp;Discard
           </Button>
-          <Button variant="success" onClick={props.nextStep}>
-            Next
+          <Button variant="outline-success" size="lg" onClick={handleNext}>
+            Next &nbsp;
+            <FaArrowAltCircleRight className="mb-1" />
           </Button>
         </Modal.Footer>
       </Form>

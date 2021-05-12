@@ -26,6 +26,7 @@ module.exports.handler = async (event) => {
       body: JSON.stringify(questionData),
     };
   } catch (e) {
+    console.log(e);
     response = {
       statusCode: 500,
       body: JSON.stringify({ message: "Failed to get questions", error: e }),
