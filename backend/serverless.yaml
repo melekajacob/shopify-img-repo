@@ -1,0 +1,87 @@
+service: question-vault
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-2
+  environment:
+    ENV: ${self:provider.stage}
+    QUESTIONS_BUCKET_NAME: ${self:custom.questionsBucketName}
+    QUESTIONS_TABLE_NAME: ${self:custom.questionsTableName}
+
+custom:
+  questionsBucketName: ${self:service}-questions-bucket-${self:provider.stage}
+  questionsTableName: ${self:service}-questions-table-${self:provider.stage}
+
+resources:
+  Resources:
+    FileBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.questionsBucketName} # we use the bucket name defined above
+        AccessControl: PublicRead # don't use public read, just used so we can view the image from a url
+
+    QuestionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: QuestionsTable
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+functions:
+  uploadQuestion:
+    handler: src/uploadQuestion.handler # this is how you look in specific folder for function
+    name: upload-question
+    timeout: 60
+    memorySize: 128
+    events:
+      - http:
+          path: /users/{user_id}/questions
+          method: POST
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "s3:Put*"
+        Resource: arn:aws:s3:::${self:custom.questionsBucketName}/*
+
+  deleteQuestion:
+    handler: src/deleteQuestion.handler # this is how you look in specific folder for function
+    name: delete-question
+    timeout: 60
+    memorySize: 128
+    events:
+      - http:
+          path: /users/{user_id}/questions/{question_id}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "s3:Delete*"
+        Resource: arn:aws:s3:::${self:custom.questionsBucketName}/*
+
+  getQuestions:
+    handler: src/deleteQuestion.handler # this is how you look in specific folder for function
+    name: get-questions
+    timeout: 60
+    memorySize: 128
+    events:
+      - http:
+          path: /users/{user_id}/questions
+          method: GET
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "s3:Get*"
+        Resource: arn:aws:s3:::${self:custom.questionsBucketName}/*

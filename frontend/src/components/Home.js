@@ -1,0 +1,39 @@
+import AddQuestionButton from "./AddQuestionButton";
+import QuestionsList from "./QuestionsList";
+import { Container, Row, Col } from "react-bootstrap";
+import { Auth } from "aws-amplify";
+import { useEffect } from "react";
+import { Toast } from "./utils/notifications";
+import DarkNavbar from "./DarkNavbar";
+
+const Home = () => {
+  useEffect(() => {
+    (async () => {
+      let user = null;
+
+      user = await Auth.currentAuthenticatedUser();
+      Toast("Test", JSON.stringify(user), "danger");
+    })();
+  }, []);
+
+  return (
+    <>
+      <DarkNavbar />
+      <Container fluid>
+        <Container>
+          <Row className="m-3">
+            <Col className="col-md-12 text-center">
+              <AddQuestionButton />
+            </Col>
+          </Row>
+        </Container>
+
+        <hr></hr>
+
+        <QuestionsList />
+      </Container>
+    </>
+  );
+};
+
+export default Home;
