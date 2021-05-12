@@ -10,6 +10,7 @@ import styles from "./QuestionCard.module.css";
 
 function QuestionCard(props) {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const openImageViewer = () => {
     setIsViewerOpen(true);
@@ -20,6 +21,7 @@ function QuestionCard(props) {
   };
 
   const handleDelete = async () => {
+    setIsLoading(true);
     const user = await Auth.currentAuthenticatedUser();
     const path = replacePathParams(ROUTES.DELETE_QUESTION, {
       user_id: user.username,
@@ -40,6 +42,7 @@ function QuestionCard(props) {
       Toast("Error!", "Failed to Delete Question/Solution", "danger");
     }
 
+    setIsLoading(false);
     props.getQuestionData();
   };
 
@@ -56,6 +59,7 @@ function QuestionCard(props) {
           href="#"
           className="btn btn-outline-success m-1"
           onClick={openImageViewer}
+          disabled={isLoading}
         >
           <FaEye />
           &nbsp;View Question
@@ -65,6 +69,7 @@ function QuestionCard(props) {
           href="#"
           className="btn btn-outline-danger m-1"
           onClick={handleDelete}
+          disabled={isLoading}
         >
           <FaTrashAlt />
           &nbsp;Delete Question
